@@ -169,7 +169,6 @@ def load_articles_and_tags(data_path: str, repo: MemoryRepository):
         article = Movie(
             title=data_row[1],
             release_year=data_row[6],
-            image_hyperlink=data_row[-1],
             rating=data_row[8],
             votes=data_row[9],
             revenue=data_row[10],

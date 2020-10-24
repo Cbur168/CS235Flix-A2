@@ -1,5 +1,6 @@
 from datetime import date, datetime
 from typing import List, Iterable
+import urllib, json
 
 
 class User:
@@ -178,7 +179,7 @@ class Genre:
 
 class Movie:
 
-    def __init__(self, title: str, release_year: int, image_hyperlink : str, rating : str, votes : str, revenue : str, metascore : str):
+    def __init__(self, title: str, release_year: int, rating : str, votes : str, revenue : str, metascore : str):
         if title == "" or type(title) is not str:
             self.__title = None
         else:
@@ -197,7 +198,6 @@ class Movie:
         self.__runtime_minutes = 0
         self.__id = 0
         self.__comments = []
-        self._image_hyperlink = image_hyperlink
         self._rating = rating
         self._votes = votes
         self._revenue = revenue
@@ -221,7 +221,14 @@ class Movie:
 
     @property
     def image_hyperlink(self) -> str:
-        return self._image_hyperlink
+        url = f"https://api.themoviedb.org/3/search/movie?api_key=15d2ea6d0dc1d476efbca3eba2b9bbfb&language=en-US&query={urllib.parse.quote(self.title, safe='')}&page=1&primary_release_year={urllib.parse.quote(str(self.release_year), safe='')}"
+        response = urllib.request.urlopen(url)
+        data = json.loads(response.read())
+        if len(data['results']) > 0:
+            img_link = f"http://image.tmdb.org/t/p/w500/{data['results'][0]['poster_path']}"
+        else:
+            img_link = "None"
+        return img_link
 
     @property
     def id(self) -> int:
