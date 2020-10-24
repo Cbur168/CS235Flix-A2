@@ -20,11 +20,11 @@ news_blueprint = Blueprint(
     'news_bp', __name__)
 
 
-@news_blueprint.route('/articles_by_date', methods=['GET'])
-def articles_by_date():
+@news_blueprint.route('/all_movies', methods=['GET'])
+def all_movies():
     # Read query parameters.
     target_date = request.args.get('release_year')
-    article_to_show_comments = request.args.get('view_comments_for')
+    #article_to_show_comments = request.args.get('view_comments_for')
 
     # Fetch the first and last articles in the series.
     first_article = services.get_first_article(repo.repo_instance)
@@ -32,18 +32,18 @@ def articles_by_date():
 
     if target_date is None:
         # No date query parameter, so return articles from day 1 of the series.
-        target_date = first_article['release_year']
+        target_date = first_article
 
-    if article_to_show_comments is None:
-        # No view-comments query parameter, so set to a non-existent article id.
-        article_to_show_comments = -1
-    else:
-        # Convert article_to_show_comments from string to int.
-        article_to_show_comments = int(article_to_show_comments)
+    # if article_to_show_comments is None:
+    #     # No view-comments query parameter, so set to a non-existent article id.
+    #     article_to_show_comments = -1
+    # else:
+    #     # Convert article_to_show_comments from string to int.
+    #     article_to_show_comments = int(article_to_show_comments)
 
     # Fetch article(s) for the target date. This call also returns the previous and next dates for articles immediately
     # before and after the target date.
-    articles, previous_date, next_date = services.get_articles_by_date(target_date, repo.repo_instance)
+    articles, previous_date, next_date = services.get_all_movies(target_date, repo.repo_instance)
 
     first_article_url = None
     last_article_url = None
@@ -54,32 +54,32 @@ def articles_by_date():
         # There's at least one article for the target date.
         if previous_date is not None:
             # There are articles on a previous date, so generate URLs for the 'previous' and 'first' navigation buttons.
-            prev_article_url = url_for('news_bp.articles_by_date', date=previous_date.isoformat())
-            first_article_url = url_for('news_bp.articles_by_date', date=first_article['date'].isoformat())
+            prev_article_url = url_for('news_bp.all_movies')
+            first_article_url = url_for('news_bp.all_movies')
 
         # There are articles on a subsequent date, so generate URLs for the 'next' and 'last' navigation buttons.
         if next_date is not None:
-            next_article_url = url_for('news_bp.articles_by_date', date=next_date.isoformat())
-            last_article_url = url_for('news_bp.articles_by_date', date=last_article['date'].isoformat())
+            next_article_url = url_for('news_bp.all_movies')
+            last_article_url = url_for('news_bp.all_movies')
 
         # Construct urls for viewing article comments and adding comments.
         for article in articles:
-            article['view_comment_url'] = url_for('news_bp.articles_by_date', date=target_date, view_comments_for=article['id'])
-            article['add_comment_url'] = url_for('news_bp.comment_on_article', article=article['id'])
+            article['view_comment_url'] = url_for('news_bp.all_movies')
+          #  article['add_comment_url'] = url_for('news_bp.comment_on_article', article=article['id'])
 
         # Generate the webpage to display the articles.
         return render_template(
             'news/articles.html',
             title='Articles',
-            articles_title=target_date.strftime('%A %B %e %Y'),
+            articles_title="Movies",
             articles=articles,
-            selected_articles=utilities.get_selected_articles(len(articles) * 2),
+            selected_articles=utilities.get_selected_articles(),
             tag_urls=utilities.get_tags_and_urls(),
             first_article_url=first_article_url,
             last_article_url=last_article_url,
             prev_article_url=prev_article_url,
             next_article_url=next_article_url,
-            show_comments_for_article=article_to_show_comments
+            #show_comments_for_article=article_to_show_comments
         )
 
     # No articles to show, so return the homepage.
@@ -145,7 +145,7 @@ def articles_by_tag():
         title='Articles',
         articles_title='Articles tagged by ' + tag_name,
         articles=articles,
-        selected_articles=utilities.get_selected_articles(len(articles) * 2),
+        selected_articles=utilities.get_selected_articles(),
         tag_urls=utilities.get_tags_and_urls(),
         first_article_url=first_article_url,
         last_article_url=last_article_url,
@@ -179,7 +179,7 @@ def comment_on_article():
 
         # Cause the web browser to display the page of all articles that have the same date as the commented article,
         # and display all comments, including the new comment.
-        return redirect(url_for('news_bp.articles_by_date', date=article['date'], view_comments_for=article_id))
+        return redirect(url_for('news_bp.all_movies', date=article['date'], view_comments_for=article_id))
 
     if request.method == 'GET':
         # Request is a HTTP GET to display the form.
