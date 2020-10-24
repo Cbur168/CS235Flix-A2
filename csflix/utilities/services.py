@@ -18,11 +18,9 @@ def get_random_articles(quantity, repo: AbstractRepository):
     if quantity >= article_count:
         # Reduce the quantity of ids to generate if the repository has an insufficient number of articles.
         quantity = article_count - 1
-
     # Pick distinct and random articles.
     random_ids = random.sample(range(1, article_count), quantity)
     articles = repo.get_articles_by_id(random_ids)
-
     return articles_to_dict(articles)
 
 
@@ -33,8 +31,8 @@ def get_random_articles(quantity, repo: AbstractRepository):
 def article_to_dict(article: Article):
     article_dict = {
         'date': article.release_year,
-        'title': article.title
-        #'image_hyperlink': article.image_hyperlink
+        'title': article.title,
+        'image_hyperlink': article.image_hyperlink
     }
     return article_dict
 
