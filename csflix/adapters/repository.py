@@ -40,11 +40,10 @@ class AbstractRepository(abc.ABC):
 
         If there is no Article with the given id, this method returns None.
         """
-        print("??")
         raise NotImplementedError
 
     @abc.abstractmethod
-    def get_articles_by_date(self, target_date: date) -> List[Movie]:
+    def get_all_movies(self, target_date: date) -> List[Movie]:
         """ Returns a list of Articles that were published on target_date.
 
         If there are no Articles on the given date, this method returns an empty list.

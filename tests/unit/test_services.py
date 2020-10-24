@@ -127,10 +127,10 @@ def test_get_last_article(in_memory_repo):
     assert article_as_dict['id'] == 6
 
 
-def test_get_articles_by_date_with_one_date(in_memory_repo):
+def test_get_all_movies_with_one_date(in_memory_repo):
     target_date = date.fromisoformat('2020-02-28')
 
-    articles_as_dict, prev_date, next_date = news_services.get_articles_by_date(target_date, in_memory_repo)
+    articles_as_dict, prev_date, next_date = news_services.get_all_movies(target_date, in_memory_repo)
 
     assert len(articles_as_dict) == 1
     assert articles_as_dict[0]['id'] == 1
@@ -139,10 +139,10 @@ def test_get_articles_by_date_with_one_date(in_memory_repo):
     assert next_date == date.fromisoformat('2020-02-29')
 
 
-def test_get_articles_by_date_with_multiple_dates(in_memory_repo):
+def test_get_all_movies_with_multiple_dates(in_memory_repo):
     target_date = date.fromisoformat('2020-03-01')
 
-    articles_as_dict, prev_date, next_date = news_services.get_articles_by_date(target_date, in_memory_repo)
+    articles_as_dict, prev_date, next_date = news_services.get_all_movies(target_date, in_memory_repo)
 
     # Check that there are 3 articles dated 2020-03-01.
     assert len(articles_as_dict) == 3
@@ -156,10 +156,10 @@ def test_get_articles_by_date_with_multiple_dates(in_memory_repo):
     assert next_date == date.fromisoformat('2020-03-05')
 
 
-def test_get_articles_by_date_with_non_existent_date(in_memory_repo):
+def test_get_all_movies_with_non_existent_date(in_memory_repo):
     target_date = date.fromisoformat('2020-03-06')
 
-    articles_as_dict, prev_date, next_date = news_services.get_articles_by_date(target_date, in_memory_repo)
+    articles_as_dict, prev_date, next_date = news_services.get_all_movies(target_date, in_memory_repo)
 
     # Check that there are no articles dated 2020-03-06.
     assert len(articles_as_dict) == 0

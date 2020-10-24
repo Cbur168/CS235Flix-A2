@@ -69,15 +69,15 @@ def test_repository_does_not_retrieve_a_non_existent_article(in_memory_repo):
     assert article is None
 
 
-def test_repository_can_retrieve_articles_by_date(in_memory_repo):
-    articles = in_memory_repo.get_articles_by_date(date(2020, 3, 1))
+def test_repository_can_retrieve_all_movies(in_memory_repo):
+    articles = in_memory_repo.get_all_movies(date(2020, 3, 1))
 
     # Check that the query returned 3 Articles.
     assert len(articles) == 3
 
 
 def test_repository_does_not_retrieve_an_article_when_there_are_no_articles_for_a_given_date(in_memory_repo):
-    articles = in_memory_repo.get_articles_by_date(date(2020, 3, 8))
+    articles = in_memory_repo.get_all_movies(date(2020, 3, 8))
     assert len(articles) == 0
 
 

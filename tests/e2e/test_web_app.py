@@ -82,7 +82,7 @@ def test_comment(client, auth):
         '/comment',
         data={'comment': 'Who needs quarantine?', 'article_id': 2}
     )
-    assert response.headers['Location'] == 'http://localhost/articles_by_date?date=2020-02-29&view_comments_for=2'
+    assert response.headers['Location'] == 'http://localhost/all_movies?date=2020-02-29&view_comments_for=2'
 
 
 @pytest.mark.parametrize(('comment', 'messages'), (
@@ -106,7 +106,7 @@ def test_comment_with_invalid_input(client, auth, comment, messages):
 
 def test_articles_without_date(client):
     # Check that we can retrieve the articles page.
-    response = client.get('/articles_by_date')
+    response = client.get('/all_movies')
     assert response.status_code == 200
 
     # Check that without providing a date query parameter the page includes the first article.
@@ -116,7 +116,7 @@ def test_articles_without_date(client):
 
 def test_articles_with_date(client):
     # Check that we can retrieve the articles page.
-    response = client.get('/articles_by_date?date=2020-02-29')
+    response = client.get('/all_movies?date=2020-02-29')
     assert response.status_code == 200
 
     # Check that all articles on the requested date are included on the page.
@@ -126,7 +126,7 @@ def test_articles_with_date(client):
 
 def test_articles_with_comment(client):
     # Check that we can retrieve the articles page.
-    response = client.get('/articles_by_date?date=2020-02-28&view_comments_for=1')
+    response = client.get('/all_movies?date=2020-02-28&view_comments_for=1')
     assert response.status_code == 200
 
     # Check that all comments for specified article are included on the page.

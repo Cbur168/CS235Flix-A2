@@ -1,5 +1,6 @@
 import csv
 import os
+import urllib, json, re
 from datetime import date, datetime
 from typing import List
 
@@ -8,7 +9,7 @@ from bisect import bisect, bisect_left, insort_left
 from werkzeug.security import generate_password_hash
 
 from csflix.adapters.repository import AbstractRepository, RepositoryException
-from csflix.domain.model import Movie, Tag, User, Review, make_tag_association, make_comment
+from csflix.domain.model import Movie, Director, Genre, Actor, Tag, User, Review, make_tag_association, make_comment
 
 
 class MemoryRepository(AbstractRepository):
@@ -41,25 +42,10 @@ class MemoryRepository(AbstractRepository):
 
         return article
 
-    def get_articles_by_date(self, target_date: date) -> List[Movie]:
-        target_article = Movie(
-            release_year=target_date,
-            title=None,
-        )
+    def get_all_movies(self, target_date: date) -> List[Movie]:
         matching_articles = list()
-
-        try:
-            index = self.article_index(target_article)
-            for article in self._articles[index:None]:
-                if article.release_year == target_date:
-                    matching_articles.append(article)
-                else:
-                    break
-        except ValueError:
-            # No articles for specified date. Simply return an empty list.
-            pass
-        except Exception as e:
-            print(e)
+        for article in self._articles[0:10]:
+            matching_articles.append(article)
 
         return matching_articles
 
@@ -86,6 +72,7 @@ class MemoryRepository(AbstractRepository):
 
         # Fetch the Articles.
         articles = [self._articles_index[id] for id in existing_ids]
+        
         return articles
 
     def get_article_ids_for_tag(self, tag_name: str):
@@ -122,8 +109,8 @@ class MemoryRepository(AbstractRepository):
         try:
             index = self.article_index(article)
             for stored_article in self._articles[index + 1:len(self._articles)]:
-                if stored_article.date > article.date:
-                    next_date = stored_article.date
+                if stored_article.id > article.id:
+                    next_date = stored_article.id
                     break
         except ValueError:
             # No subsequent articles, so return None.
@@ -147,7 +134,7 @@ class MemoryRepository(AbstractRepository):
     # Helper method to return article index.
     def article_index(self, article: Review):
         index = bisect_left(self._articles, article)
-        if index != len(self._articles) and self._articles[index].date == article.date:
+        if index != len(self._articles) and self._articles[index].id == article.id:
             return index
         raise ValueError
 
@@ -178,13 +165,25 @@ def load_articles_and_tags(data_path: str, repo: MemoryRepository):
         #     tags[tag].append(article_key)
         # del data_row[-number_of_tags:]
 
-        # Create Article object.
+        # Create Movie object
         article = Movie(
             title=data_row[1],
-            release_year=data_row[6]
+            release_year=data_row[6],
+            image_hyperlink=data_row[-1],
+            rating=data_row[8],
+            votes=data_row[9],
+            revenue=data_row[10],
+            metascore=data_row[11]
         )
         article.id = data_row[0]
+        article.description = data_row[3]
+        article.director = Director(data_row[4])
+        for actor in re.split(', |,', data_row[5]):
+            article.add_actor(Actor(actor))
         
+        for genre in re.split(', |,', data_row[2]):
+            article.add_genre(Genre(genre))
+        article.runtime_minutes = data_row[7]
 
         # Add the Article to the repository.
         repo.add_article(article)
@@ -203,7 +202,7 @@ def load_users(data_path: str, repo: MemoryRepository):
 
     for data_row in read_csv_file(os.path.join(data_path, 'users.csv')):
         user = User(
-            user_name=data_row[1],
+            username=data_row[1],
             password=generate_password_hash(data_row[2])
         )
         repo.add_user(user)

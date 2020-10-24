@@ -235,3 +235,9 @@ input[type='submit']:hover {
     fill: currentColor;
     overflow: hidden;
 }
+
+.poster {
+  display: inline-block;
+  height:200px;
+  width:auto;
+}

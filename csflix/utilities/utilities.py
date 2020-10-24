@@ -22,5 +22,5 @@ def get_selected_articles(quantity=3):
     articles = services.get_random_articles(quantity, repo.repo_instance)
 
     #for article in articles:
-     #   article['hyperlink'] = url_for('news_bp.articles_by_date', date=article['date'].isoformat())
+     #   article['hyperlink'] = url_for('news_bp.all_movies', date=article['date'].isoformat())
     return articles
