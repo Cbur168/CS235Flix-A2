@@ -4,9 +4,9 @@ from typing import List, Iterable
 
 class User:
     
-    def __init__(self, user_name, password):
-        if type(user_name) == str:
-            self.__username = user_name.strip().lower()
+    def __init__(self, username, password):
+        if type(username) == str:
+            self.__username = username.strip().lower()
         else:
             self.__username = None
         
@@ -20,7 +20,7 @@ class User:
         self.__watch_time = 0
 
     @property
-    def user_name(self):
+    def username(self):
         return self.__username
     
     @property
@@ -39,10 +39,10 @@ class User:
     def time_spent_watching_movies_minutes(self):
         return self.__watch_time
     
-    @user_name.setter
-    def user_name(self, user_name):
-        if type(user_name) == str:
-            self.__username = user_name.strip().lower()
+    @username.setter
+    def username(self, username):
+        if type(username) == str:
+            self.__username = username.strip().lower()
         
     @password.setter
     def password(self, password):
@@ -178,7 +178,7 @@ class Genre:
 
 class Movie:
 
-    def __init__(self, title: str, release_year: int):
+    def __init__(self, title: str, release_year: int, image_hyperlink : str, rating : str, votes : str, revenue : str, metascore : str):
         if title == "" or type(title) is not str:
             self.__title = None
         else:
@@ -197,6 +197,31 @@ class Movie:
         self.__runtime_minutes = 0
         self.__id = 0
         self.__comments = []
+        self._image_hyperlink = image_hyperlink
+        self._rating = rating
+        self._votes = votes
+        self._revenue = revenue
+        self._metascore = metascore
+
+    @property
+    def rating(self) -> str:
+        return self._rating
+
+    @property
+    def votes(self) -> str:
+        return self._votes
+
+    @property
+    def revenue(self) -> str:
+        return self._revenue
+
+    @property
+    def metascore(self) -> str:
+        return self._metascore
+
+    @property
+    def image_hyperlink(self) -> str:
+        return self._image_hyperlink
 
     @property
     def id(self) -> int:
