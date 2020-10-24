@@ -51,11 +51,10 @@ def get_last_article(repo: AbstractRepository):
     return article_to_dict(article)
 
 
-def get_articles_by_date(date, repo: AbstractRepository):
+def get_all_movies(date, repo: AbstractRepository):
     # Returns articles for the target date (empty if no matches), the date of the previous article (might be null), the date of the next article (might be null)
 
-    articles = repo.get_articles_by_date(target_date=date)
-
+    articles = repo.get_all_movies(target_date=date)
     articles_dto = list()
     prev_date = next_date = None
 
@@ -104,7 +103,11 @@ def article_to_dict(article: Article):
         'title': article.title,
         'description': article.description,
     #    'hyperlink': article.hyperlink,
-        # 'image_hyperlink': article.image_hyperlink,
+        'rating' : article.rating,
+        'votes' : article.votes,
+        'revenue' : article.revenue,
+        'metascore' : article.metascore,
+        'image_hyperlink': article.image_hyperlink,
         'comments': comments_to_dict(article.comments),
         # 'tags': tags_to_dict(article.tags)
     }
@@ -118,8 +121,8 @@ def articles_to_dict(articles: Iterable[Article]):
 def comment_to_dict(comment: Comment):
     comment_dict = {
         'username': comment.user.username,
-        'article_id': comment.article.id,
-        'comment_text': comment.comment,
+        'article_id': comment.movie.id,
+        'comment_text': comment.review_text,
         'timestamp': comment.timestamp
     }
     return comment_dict

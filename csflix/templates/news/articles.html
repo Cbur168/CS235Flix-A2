@@ -37,10 +37,13 @@
     {% for article in articles %}
     <article id="article">
         <a href="{{article.hyperlink}}" target="_blank">
-            <img src={{article.image_hyperlink}} alt="article image">
+            <img class="poster" src="{{article.image_hyperlink}}" alt="Movie Poster">
         </a>
         <h2>{{article.title}}</h2>
         <p>{{article.description}}</p>
+        <p>Metascore: {{article.metascore}}  Rating: {{article.rating}}/10</p>
+        <p>Gross Revenue: {{article.revenue}} million</p>
+        <p>{{article.votes}} Votes</p>
         <div style="float:left">
             {% for tag in article.tags %}
             <button class="btn-general" onclick="location.href='{{ tag_urls[tag.name] }}'">{{ tag.name }}</button>

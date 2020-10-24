@@ -1,13 +1,13 @@
 <aside id="sidebar">
 
     <header>
-        <h1>Hot flix</h1>
+        <h1>Hot Flix</h1>
     </header>
 
     {% for article in selected_articles %}
         <div id="article-container">
             <a href="{{ article.hyperlink }}" >
-                <img src={{ article.image_hyperlink }} class="img-small">
+                <img alt="Movie Poster" src="{{article.image_hyperlink}}" class="poster">
             </a>
             <div id="article-description">
                 <p>{{ article.title }}, ({{ article.date }}).</p>
