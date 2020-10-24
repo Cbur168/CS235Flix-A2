@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>CS235Flix</title>
+
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/main.css') }}"
+    />
+	
+	<link
+      rel="icon"
+      href="https://icons-for-free.com/iconfiles/png/512/clapper+cut+director+making+movie+take+icon-1320195777589696004.png"
+    />
+  </head>
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+  <body>
+    <div id="body">
+      <!-- Include navigation partial. -->
+      {% include 'navigation.html' %}
+
+      <div id="content-2">
+        <!-- Include header partial. -->
+        {% include 'header.html' %}
+
+        <div id="container">
+          <!-- Main content block to be supplied by page. -->
+          {% block content %} {% endblock %}
+
+          <!-- Include sidebar partial. -->
+          {% include 'sidebar.html' %}
+        </div>
+        
+      </div>
+    </div>
+  </body>
+</html>
