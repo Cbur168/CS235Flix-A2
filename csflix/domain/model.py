@@ -202,6 +202,11 @@ class Movie:
         self._votes = votes
         self._revenue = revenue
         self._metascore = metascore
+        self.__url = None
+
+    @property
+    def number_of_comments(self) -> int:
+        return len(self.__comments)
 
     @property
     def rating(self) -> str:
@@ -221,14 +226,16 @@ class Movie:
 
     @property
     def image_hyperlink(self) -> str:
+        if self.__url:
+            return self.__url
         url = f"https://api.themoviedb.org/3/search/movie?api_key=15d2ea6d0dc1d476efbca3eba2b9bbfb&language=en-US&query={urllib.parse.quote(self.title, safe='')}&page=1&primary_release_year={urllib.parse.quote(str(self.release_year), safe='')}"
         response = urllib.request.urlopen(url)
         data = json.loads(response.read())
         if len(data['results']) > 0:
-            img_link = f"http://image.tmdb.org/t/p/w500/{data['results'][0]['poster_path']}"
+            self.__url = f"http://image.tmdb.org/t/p/w500/{data['results'][0]['poster_path']}"
         else:
-            img_link = "None"
-        return img_link
+            self.__url = "None"
+        return self.__url
 
     @property
     def id(self) -> int:
