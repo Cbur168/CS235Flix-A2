@@ -97,7 +97,7 @@ def article_to_dict(article: Article):
         'release_year': article.release_year,
         'title': article.title,
         'description': article.description,
-    #    'hyperlink': article.hyperlink,
+        'hyperlink': article.hyperlink,
         'rating' : article.rating,
         'votes' : article.votes,
         'revenue' : article.revenue,

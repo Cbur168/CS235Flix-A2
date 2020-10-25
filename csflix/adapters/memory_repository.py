@@ -27,7 +27,7 @@ class MemoryRepository(AbstractRepository):
         self._users.append(user)
 
     def get_user(self, username) -> User:
-        return next((user for user in self._users if user.username == username.lower()), None)
+        return next((user for user in self._users if user.username == username.lower), None)
 
     def add_article(self, article: Movie):
         insort_left(self._articles, article)
@@ -37,7 +37,7 @@ class MemoryRepository(AbstractRepository):
         article = None
         
         try:
-            article = self._articles_index[id]
+            article = self._articles_index[int(id)]
         except KeyError:
             pass  # Ignore exception and return None.
 

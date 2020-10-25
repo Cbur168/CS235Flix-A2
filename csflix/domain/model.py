@@ -225,6 +225,10 @@ class Movie:
         return self._metascore
 
     @property
+    def hyperlink(self) -> str:
+        return f"/movie/{self.__id}"
+
+    @property
     def image_hyperlink(self) -> str:
         if self.__url:
             return self.__url

@@ -88,6 +88,15 @@ def all_movies(page_number):
     # No articles to show, so return the homepage.
     return redirect(url_for('home_bp.home'))
 
+@news_blueprint.route('/movie/<movie_id>', methods=['GET'])
+def display_movie(movie_id):
+    movie = repo.repo_instance.get_article(movie_id)
+    return render_template(
+            'news/movie.html',
+            movie=movie
+        )
+
+
 @news_blueprint.route('/comment', methods=['GET', 'POST'])
 @login_required
 def comment_on_article():
