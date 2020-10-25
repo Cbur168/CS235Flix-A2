@@ -54,9 +54,10 @@ class MemoryRepository(AbstractRepository):
             self.split_movies(filter=search, tag=tag)
         else:
             self.split_movies()
-
-        return self._articles_by_page[int(n)]
-
+        try:
+            return self._articles_by_page[int(n)]
+        except:
+            return
     def get_number_of_articles(self):
         return len(self._articles)
 

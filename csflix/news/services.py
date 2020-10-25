@@ -109,8 +109,10 @@ def article_to_dict(article: Article):
 
 
 def articles_to_dict(articles: Iterable[Article]):
-    return [article_to_dict(article) for article in articles]
-
+    try:
+        return [article_to_dict(article) for article in articles]
+    except:
+        return
 
 def comment_to_dict(comment: Comment):
     comment_dict = {

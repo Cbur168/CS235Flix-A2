@@ -8,8 +8,13 @@
     {% if movie.comments|length > 0 %}
         <button class="btn-general">{{ movie.comments|length }} reviews</button>
     {% endif %}
-
+    {% if 'username' in session %}
     <button class="btn-general">Review</button>
+    {% else %}
+    <a href="/authentication/login">
+    <button class="btn-general">Review</button>
+    </a>
+    {% endif %}
     
 </div>
 

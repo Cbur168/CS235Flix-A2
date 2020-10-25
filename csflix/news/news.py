@@ -56,7 +56,7 @@ def all_movies(page_number):
     next_article_url = None
     prev_article_url = None
 
-    if len(articles) > 0:
+    if articles:
         # There's at least one article for the target date.
         prev_article_url = url_for('news_bp.all_movies', page_number=int(page_number)-1, sort=tag, search=search)
         first_article_url = url_for('news_bp.all_movies', page_number=0,sort=tag, search=search)
