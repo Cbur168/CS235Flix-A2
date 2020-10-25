@@ -12,7 +12,7 @@ class UnknownUserException(Exception):
     pass
 
 
-def add_comment(article_id: int, comment_text: str, username: str, repo: AbstractRepository):
+def add_comment(article_id: int, comment_text: str, username: str, rating : str, repo: AbstractRepository):
     # Check that the article exists.
     article = repo.get_article(article_id)
     if article is None:
@@ -23,8 +23,7 @@ def add_comment(article_id: int, comment_text: str, username: str, repo: Abstrac
         raise UnknownUserException
 
     # Create comment.
-    comment = make_comment(comment_text, user, article)
-
+    comment = make_comment(comment_text, user, article, rating)
     # Update the repository.
     repo.add_comment(comment)
 
@@ -144,6 +143,6 @@ def tags_to_dict(tags: Iterable[Tag]):
 # ============================================
 
 def dict_to_article(dict):
-    article = Article(dict.title, dict.release_year)
+    article = Article(dict['title'], dict['release_year'], dict['rating'], dict['votes'], dict['revenue'], dict['metascore'])
     # Note there's no comments or tags.
     return article

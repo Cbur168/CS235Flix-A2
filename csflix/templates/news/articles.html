@@ -57,7 +57,7 @@
 
     {% for article in articles %}
     <article id="article">
-        <a href="{{article.hyperlink}}" target="_blank">
+        <a href="{{article.hyperlink}}">
             <img class="poster" src="{{article.image_hyperlink}}" alt="Movie Poster">
         </a>
         <h2>{{article.title}}</h2>
@@ -65,20 +65,8 @@
         <p>Metascore: {{article.metascore}}  Rating: {{article.rating}}/10</p>
         <p>Gross Revenue: {{article.revenue}} million</p>
         <p>{{article.votes}} Votes</p>
-        <div style="float:right">
-            {% if article.comments|length > 0 and article.id != show_comments_for_article %}
-                <button class="btn-general" onclick="location.href='{{ article.view_comment_url }}'">{{ article.comments|length }} comments</button>
-            {% endif %}
-            <button class="btn-general" onclick="location.href='{{ article.add_comment_url }}'">Comment</button>
-        </div>
-        {% if article.id == show_comments_for_article %}
-        <div style="clear:both">
-            {% for comment in article.comments %}
-                <p>{{comment.comment_text}}, by {{comment.username}}, {{comment.timestamp}}</p>
-            {% endfor %}
-        </div>
-        {% endif %}
     </article>
+    <hr class="bar">
     {% endfor %}
 
     <footer>

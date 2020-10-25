@@ -27,7 +27,7 @@ class MemoryRepository(AbstractRepository):
         self._users.append(user)
 
     def get_user(self, username) -> User:
-        return next((user for user in self._users if user.username == username.lower), None)
+        return next((user for user in self._users if user.username == username.lower()), None)
 
     def add_article(self, article: Movie):
         insort_left(self._articles, article)
@@ -50,8 +50,11 @@ class MemoryRepository(AbstractRepository):
         self._articles_by_page = [filtered_articles[i:i + max_per_page] for i in range(0, len(filtered_articles), max_per_page)]
 
     def get_all_movies(self, n, search, tag) -> List[Movie]:
-        if search:
+        if search or tag:
             self.split_movies(filter=search, tag=tag)
+        else:
+            self.split_movies()
+
         return self._articles_by_page[int(n)]
 
     def get_number_of_articles(self):
@@ -221,7 +224,7 @@ def load_comments(data_path: str, repo: MemoryRepository, users):
             comment_text=data_row[3],
             user=users[data_row[1]],
             article=repo.get_article(int(data_row[2])),
-            timestamp=datetime.fromisoformat(data_row[4])
+            rating=data_row[4]
         )
         repo.add_comment(comment)
 

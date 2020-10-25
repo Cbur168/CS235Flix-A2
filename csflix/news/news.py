@@ -48,7 +48,7 @@ def all_movies(page_number):
         session['no_results'] = "No Results Found"
         repo.repo_instance.split_movies()
         articles = services.get_all_movies(page_number, repo.repo_instance)
-    except:
+    except KeyError:
         pass
 
     first_article_url = None
@@ -58,12 +58,12 @@ def all_movies(page_number):
 
     if len(articles) > 0:
         # There's at least one article for the target date.
-        prev_article_url = url_for('news_bp.all_movies', page_number=int(page_number)-1)
-        first_article_url = url_for('news_bp.all_movies', page_number=0)
+        prev_article_url = url_for('news_bp.all_movies', page_number=int(page_number)-1, sort=tag, search=search)
+        first_article_url = url_for('news_bp.all_movies', page_number=0,sort=tag, search=search)
 
         # There are articles on a subsequent date, so generate URLs for the 'next' and 'last' navigation buttons.
-        next_article_url = url_for('news_bp.all_movies', page_number=int(page_number)+1)
-        last_article_url = url_for('news_bp.all_movies', page_number=-1)
+        next_article_url = url_for('news_bp.all_movies', page_number=int(page_number)+1,sort=tag, search=search)
+        last_article_url = url_for('news_bp.all_movies', page_number=-1,sort=tag, search=search)
 
         # Construct urls for viewing article comments and adding comments.
         #for article in articles:
@@ -97,56 +97,31 @@ def display_movie(movie_id):
         )
 
 
-@news_blueprint.route('/comment', methods=['GET', 'POST'])
+@news_blueprint.route('/comment/<id>', methods=['GET', 'POST'])
 @login_required
-def comment_on_article():
+def comment_on_article(id):
     # Obtain the username of the currently logged in user.
     username = session['username']
-
+    review_text = request.form.get('review')
+    rating = request.form.get('rating')
     # Create form. The form maintains state, e.g. when this method is called with a HTTP GET request and populates
     # the form with an article id, when subsequently called with a HTTP POST request, the article id remains in the
     # form.
     form = CommentForm()
-
-    if form.validate_on_submit():
         # Successful POST, i.e. the comment text has passed data validation.
         # Extract the article id, representing the commented article, from the form.
-        article_id = int(form.article_id.data)
+    try:
+        article_id = int(id)
 
         # Use the service layer to store the new comment.
-        services.add_comment(article_id, form.comment.data, username, repo.repo_instance)
+        services.add_comment(article_id, review_text, username, rating, repo.repo_instance)
 
         # Retrieve the article in dict form.
         article = services.get_article(article_id, repo.repo_instance)
+    except Exception as e:
+        print(e.args)
 
-        # Cause the web browser to display the page of all articles that have the same date as the commented article,
-        # and display all comments, including the new comment.
-        return redirect(url_for('news_bp.all_movies', date=article['date'], view_comments_for=article_id))
-
-    if request.method == 'GET':
-        # Request is a HTTP GET to display the form.
-        # Extract the article id, representing the article to comment, from a query parameter of the GET request.
-        article_id = int(request.args.get('article'))
-
-        # Store the article id in the form.
-        form.article_id.data = article_id
-    else:
-        # Request is a HTTP POST where form validation has failed.
-        # Extract the article id of the article being commented from the form.
-        article_id = int(form.article_id.data)
-
-    # For a GET or an unsuccessful POST, retrieve the article to comment in dict form, and return a Web page that allows
-    # the user to enter a comment. The generated Web page includes a form object.
-    article = services.get_article(article_id, repo.repo_instance)
-    return render_template(
-        'news/comment_on_article.html',
-        title='Edit article',
-        article=article,
-        form=form,
-        handler_url=url_for('news_bp.comment_on_article'),
-        selected_articles=utilities.get_selected_articles(),
-        tag_urls=utilities.get_tags_and_urls()
-    )
+    return redirect(url_for('news_bp.display_movie', movie_id=id))
 
 
 class ProfanityFree:

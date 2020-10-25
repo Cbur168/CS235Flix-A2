@@ -238,7 +238,7 @@ class Movie:
         if len(data['results']) > 0:
             self.__url = f"http://image.tmdb.org/t/p/w500/{data['results'][0]['poster_path']}"
         else:
-            self.__url = "None"
+            self.__url = None
         return self.__url
 
     @property
@@ -420,8 +420,8 @@ class ModelException(Exception):
     pass
 
 
-def make_comment(comment_text: str, user: User, article: Movie, timestamp: datetime = datetime.today()):
-    comment = Review(article, user, comment_text, 4)
+def make_comment(comment_text: str, user: User, article: Movie, rating : str):
+    comment = Review(article, user, comment_text, rating)
     user.add_review(comment)
     article.add_comment(comment)
 
