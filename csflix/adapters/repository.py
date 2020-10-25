@@ -43,7 +43,7 @@ class AbstractRepository(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def get_all_movies(self, target_date: date) -> List[Movie]:
+    def get_all_movies(self, n, filter) -> List[Movie]:
         """ Returns a list of Articles that were published on target_date.
 
         If there are no Articles on the given date, this method returns an empty list.

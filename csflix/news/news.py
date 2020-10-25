@@ -20,19 +20,17 @@ news_blueprint = Blueprint(
     'news_bp', __name__)
 
 
-@news_blueprint.route('/all_movies', methods=['GET'])
-def all_movies():
+@news_blueprint.route('/all_movies/<page_number>', methods=['GET'])
+def all_movies(page_number):
     # Read query parameters.
-    target_date = request.args.get('release_year')
+    search = request.args.get('search')
+    tag = request.args.get('sort')
     #article_to_show_comments = request.args.get('view_comments_for')
 
     # Fetch the first and last articles in the series.
     first_article = services.get_first_article(repo.repo_instance)
     last_article = services.get_last_article(repo.repo_instance)
 
-    if target_date is None:
-        # No date query parameter, so return articles from day 1 of the series.
-        target_date = first_article
 
     # if article_to_show_comments is None:
     #     # No view-comments query parameter, so set to a non-existent article id.
@@ -43,7 +41,15 @@ def all_movies():
 
     # Fetch article(s) for the target date. This call also returns the previous and next dates for articles immediately
     # before and after the target date.
-    articles, previous_date, next_date = services.get_all_movies(target_date, repo.repo_instance)
+    try:
+        articles = services.get_all_movies(page_number, repo.repo_instance, search=search, tag=tag)
+        del session['no_results']
+    except IndexError:
+        session['no_results'] = "No Results Found"
+        repo.repo_instance.split_movies()
+        articles = services.get_all_movies(page_number, repo.repo_instance)
+    except:
+        pass
 
     first_article_url = None
     last_article_url = None
@@ -52,19 +58,16 @@ def all_movies():
 
     if len(articles) > 0:
         # There's at least one article for the target date.
-        if previous_date is not None:
-            # There are articles on a previous date, so generate URLs for the 'previous' and 'first' navigation buttons.
-            prev_article_url = url_for('news_bp.all_movies')
-            first_article_url = url_for('news_bp.all_movies')
+        prev_article_url = url_for('news_bp.all_movies', page_number=int(page_number)-1)
+        first_article_url = url_for('news_bp.all_movies', page_number=0)
 
         # There are articles on a subsequent date, so generate URLs for the 'next' and 'last' navigation buttons.
-        if next_date is not None:
-            next_article_url = url_for('news_bp.all_movies')
-            last_article_url = url_for('news_bp.all_movies')
+        next_article_url = url_for('news_bp.all_movies', page_number=int(page_number)+1)
+        last_article_url = url_for('news_bp.all_movies', page_number=-1)
 
         # Construct urls for viewing article comments and adding comments.
-        for article in articles:
-            article['view_comment_url'] = url_for('news_bp.all_movies')
+        #for article in articles:
+          #  article['view_comment_url'] = url_for('news_bp.all_movies')
           #  article['add_comment_url'] = url_for('news_bp.comment_on_article', article=article['id'])
 
         # Generate the webpage to display the articles.
@@ -84,76 +87,6 @@ def all_movies():
 
     # No articles to show, so return the homepage.
     return redirect(url_for('home_bp.home'))
-
-
-@news_blueprint.route('/articles_by_tag', methods=['GET'])
-def articles_by_tag():
-    articles_per_page = 3
-
-    # Read query parameters.
-    tag_name = request.args.get('tag')
-    cursor = request.args.get('cursor')
-    article_to_show_comments = request.args.get('view_comments_for')
-
-    if article_to_show_comments is None:
-        # No view-comments query parameter, so set to a non-existent article id.
-        article_to_show_comments = -1
-    else:
-        # Convert article_to_show_comments from string to int.
-        article_to_show_comments = int(article_to_show_comments)
-
-    if cursor is None:
-        # No cursor query parameter, so initialise cursor to start at the beginning.
-        cursor = 0
-    else:
-        # Convert cursor from string to int.
-        cursor = int(cursor)
-
-    # Retrieve article ids for articles that are tagged with tag_name.
-    article_ids = services.get_article_ids_for_tag(tag_name, repo.repo_instance)
-
-    # Retrieve the batch of articles to display on the Web page.
-    articles = services.get_articles_by_id(article_ids[cursor:cursor + articles_per_page], repo.repo_instance)
-
-    first_article_url = None
-    last_article_url = None
-    next_article_url = None
-    prev_article_url = None
-
-    if cursor > 0:
-        # There are preceding articles, so generate URLs for the 'previous' and 'first' navigation buttons.
-        prev_article_url = url_for('news_bp.articles_by_tag', tag=tag_name, cursor=cursor - articles_per_page)
-        first_article_url = url_for('news_bp.articles_by_tag', tag=tag_name)
-
-    if cursor + articles_per_page < len(article_ids):
-        # There are further articles, so generate URLs for the 'next' and 'last' navigation buttons.
-        next_article_url = url_for('news_bp.articles_by_tag', tag=tag_name, cursor=cursor + articles_per_page)
-
-        last_cursor = articles_per_page * int(len(article_ids) / articles_per_page)
-        if len(article_ids) % articles_per_page == 0:
-            last_cursor -= articles_per_page
-        last_article_url = url_for('news_bp.articles_by_tag', tag=tag_name, cursor=last_cursor)
-
-    # Construct urls for viewing article comments and adding comments.
-    for article in articles:
-        article['view_comment_url'] = url_for('news_bp.articles_by_tag', tag=tag_name, cursor=cursor, view_comments_for=article['id'])
-        article['add_comment_url'] = url_for('news_bp.comment_on_article', article=article['id'])
-
-    # Generate the webpage to display the articles.
-    return render_template(
-        'news/articles.html',
-        title='Articles',
-        articles_title='Articles tagged by ' + tag_name,
-        articles=articles,
-        selected_articles=utilities.get_selected_articles(),
-        tag_urls=utilities.get_tags_and_urls(),
-        first_article_url=first_article_url,
-        last_article_url=last_article_url,
-        prev_article_url=prev_article_url,
-        next_article_url=next_article_url,
-        show_comments_for_article=article_to_show_comments
-    )
-
 
 @news_blueprint.route('/comment', methods=['GET', 'POST'])
 @login_required

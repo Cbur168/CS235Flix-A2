@@ -21,12 +21,13 @@ class MemoryRepository(AbstractRepository):
         self._tags = list()
         self._users = list()
         self._comments = list()
+        self._articles_by_page = list()
 
     def add_user(self, user: User):
         self._users.append(user)
 
     def get_user(self, username) -> User:
-        return next((user for user in self._users if user.username == username), None)
+        return next((user for user in self._users if user.username == username.lower()), None)
 
     def add_article(self, article: Movie):
         insort_left(self._articles, article)
@@ -41,13 +42,17 @@ class MemoryRepository(AbstractRepository):
             pass  # Ignore exception and return None.
 
         return article
+    
+    def split_movies(self, max_per_page = 5, filter = "", tag = 'title'):
+        tags = {None: lambda x: x.title, 'title' : lambda x: x.title, 'genres' : lambda x: "".join([z.genre_name for z in x.genres]), 'actors' : lambda x:"".join([z.actor_full_name for z in x.actors]), 'director' : lambda x: x.director.director_full_name}
+        func = tags[tag]
+        filtered_articles = [movie for movie in self._articles if filter.lower() in func(movie).lower()]
+        self._articles_by_page = [filtered_articles[i:i + max_per_page] for i in range(0, len(filtered_articles), max_per_page)]
 
-    def get_all_movies(self, target_date: date) -> List[Movie]:
-        matching_articles = list()
-        for article in self._articles[0:10]:
-            matching_articles.append(article)
-
-        return matching_articles
+    def get_all_movies(self, n, search, tag) -> List[Movie]:
+        if search:
+            self.split_movies(filter=search, tag=tag)
+        return self._articles_by_page[int(n)]
 
     def get_number_of_articles(self):
         return len(self._articles)
@@ -186,6 +191,7 @@ def load_articles_and_tags(data_path: str, repo: MemoryRepository):
 
         # Add the Article to the repository.
         repo.add_article(article)
+    repo.split_movies()
 
     # Create Tag objects, associate them with Articles and add them to the repository.
     for tag_name in tags.keys():

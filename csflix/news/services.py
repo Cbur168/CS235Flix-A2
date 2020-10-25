@@ -51,21 +51,16 @@ def get_last_article(repo: AbstractRepository):
     return article_to_dict(article)
 
 
-def get_all_movies(date, repo: AbstractRepository):
+def get_all_movies(n, repo: AbstractRepository, search=None, tag='title'):
     # Returns articles for the target date (empty if no matches), the date of the previous article (might be null), the date of the next article (might be null)
 
-    articles = repo.get_all_movies(target_date=date)
+    articles = repo.get_all_movies(n, search, tag)
     articles_dto = list()
-    prev_date = next_date = None
 
-    if len(articles) > 0:
-        prev_date = repo.get_date_of_previous_article(articles[0])
-        next_date = repo.get_date_of_next_article(articles[0])
+    # Convert Articles to dictionary form.
+    articles_dto = articles_to_dict(articles)
 
-        # Convert Articles to dictionary form.
-        articles_dto = articles_to_dict(articles)
-
-    return articles_dto, prev_date, next_date
+    return articles_dto
 
 
 def get_article_ids_for_tag(tag_name, repo: AbstractRepository):
