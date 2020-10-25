@@ -6,8 +6,7 @@ from csflix.adapters import memory_repository
 from csflix.adapters.memory_repository import MemoryRepository
 
 
-TEST_DATA_PATH = os.path.join('C:', os.sep, 'Users', 'ianwo', 'OneDrive', 'Documents', 'PythonDev', 'repo 02.07.2020',
-                              'csflix', 'tests', 'data')
+TEST_DATA_PATH = "C:\\Bullshit\\CS235Flix-A2\\tests\\data"
 #TEST_DATA_PATH = os.path.join('C:', os.sep, 'Users', 'iwar006', 'Documents', 'Python dev', 'csflix', 'tests', 'data')
 
 
