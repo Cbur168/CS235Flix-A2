@@ -118,8 +118,9 @@ def comment_on_article(id):
 
         # Retrieve the article in dict form.
         article = services.get_article(article_id, repo.repo_instance)
-    except Exception as e:
-        print(e.args)
+    except:
+        pass
+    # Ignore error and continue
 
     return redirect(url_for('news_bp.display_movie', movie_id=id))
 

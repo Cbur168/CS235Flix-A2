@@ -50,7 +50,7 @@ def get_last_article(repo: AbstractRepository):
     return article_to_dict(article)
 
 
-def get_all_movies(n, repo: AbstractRepository, search=None, tag='title'):
+def get_all_movies(n, repo: AbstractRepository, search="", tag='title'):
     # Returns articles for the target date (empty if no matches), the date of the previous article (might be null), the date of the next article (might be null)
 
     articles = repo.get_all_movies(n, search, tag)

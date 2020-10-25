@@ -1,4 +1,3 @@
-"""
 from datetime import date
 
 from csflix.domain.model import User, Movie as Article, Tag, make_comment, make_tag_association, ModelException
@@ -67,7 +66,8 @@ def test_article_less_than_operator():
 
 def test_make_comment_establishes_relationships(article, user):
     comment_text = 'csflix in the USA!'
-    comment = make_comment(comment_text, user, article)
+    rating = 3
+    comment = make_comment(comment_text, user, article, rating)
 
     # Check that the User object knows about the Comment.
     assert comment in user.comments
@@ -80,4 +80,3 @@ def test_make_comment_establishes_relationships(article, user):
 
     # Check that the Comment knows about the Article.
     assert comment.movie is article
-"""

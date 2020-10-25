@@ -1,4 +1,3 @@
-"""
 from datetime import date
 
 import pytest
@@ -58,7 +57,7 @@ def test_can_add_comment(in_memory_repo):
     username = 'fmercury'
 
     # Call the service layer to add the comment.
-    news_services.add_comment(article_id, comment_text, username, in_memory_repo)
+    news_services.add_comment(article_id, comment_text, username, 0, in_memory_repo)
 
     # Retrieve the comments for the article from the repository.
     comments_as_dict = news_services.get_comments_for_article(article_id, in_memory_repo)
@@ -70,13 +69,13 @@ def test_can_add_comment(in_memory_repo):
 
 
 def test_cannot_add_comment_for_non_existent_article(in_memory_repo):
-    article_id = 7
+    article_id = 1001
     comment_text = "csflix - what's that?"
     username = 'fmercury'
 
     # Call the service layer to attempt to add the comment.
     with pytest.raises(news_services.NonExistentArticleException):
-        news_services.add_comment(article_id, comment_text, username, in_memory_repo)
+        news_services.add_comment(article_id, comment_text, username, 5, in_memory_repo)
 
 
 def test_cannot_add_comment_by_unknown_user(in_memory_repo):
@@ -86,7 +85,7 @@ def test_cannot_add_comment_by_unknown_user(in_memory_repo):
 
     # Call the service layer to attempt to add the comment.
     with pytest.raises(news_services.UnknownUserException):
-        news_services.add_comment(article_id, comment_text, username, in_memory_repo)
+        news_services.add_comment(article_id, comment_text, username, 5, in_memory_repo)
 
 
 def test_can_get_article(in_memory_repo):
@@ -156,21 +155,19 @@ def test_get_comments_for_article(in_memory_repo):
     comments_as_dict = news_services.get_comments_for_article(1, in_memory_repo)
 
     # Check that 2 comments were returned for article with id 1.
-    assert len(comments_as_dict) == 2
+    assert len(comments_as_dict) == 3
 
     # Check that the comments relate to the article whose id is 1.
     article_ids = [comment['article_id'] for comment in comments_as_dict]
     article_ids = set(article_ids)
-    assert 1 in article_ids and len(article_ids) == 1
+    assert '1' in article_ids and len(article_ids) == 1
 
 
 def test_get_comments_for_non_existent_article(in_memory_repo):
     with pytest.raises(NonExistentArticleException):
-        comments_as_dict = news_services.get_comments_for_article(7, in_memory_repo)
+        comments_as_dict = news_services.get_comments_for_article(1001, in_memory_repo)
 
 
 def test_get_comments_for_article_without_comments(in_memory_repo):
     comments_as_dict = news_services.get_comments_for_article(2, in_memory_repo)
     assert len(comments_as_dict) == 0
-
-"""

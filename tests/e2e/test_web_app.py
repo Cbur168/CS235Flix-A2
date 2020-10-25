@@ -2,7 +2,6 @@
 import pytest
 
 from flask import session
-"""
 
 def test_register(client):
     # Check that we retrieve the register page.
@@ -65,45 +64,19 @@ def test_index(client):
     response = client.get('/')
     assert response.status_code == 200
 
-
-def test_login_required_to_comment(client):
-    response = client.post('/comment')
-    assert response.headers['Location'] == 'http://localhost/authentication/login'
-
-"""
 def test_comment(client, auth):
     # Login a user.
     auth.login()
 
     # Check that we can retrieve the comment page.
-    response = client.get('/comment?article=2')
 
     response = client.post(
-        '/comment',
-        data={'comment': 'Who needs quarantine?', 'article_id': 2}
+        '/comment/2',
+        data={'review': 'Who needs movies?', 'rating': 2}
     )
-    assert response.headers['Location'] == 'http://localhost/all_movies?date=2020-02-29&view_comments_for=2'
+    print(response.headers)
+    assert response.headers['Location'] == 'http://localhost/movie/2'
 
-
-@pytest.mark.parametrize(('comment', 'messages'), (
-        ('Who thinks Trump is a fuckwit?', (b'Your comment must not contain profanity')),
-        ('Hey', (b'Your comment is too short')),
-        ('ass', (b'Your comment is too short', b'Your comment must not contain profanity')),
-))
-def test_comment_with_invalid_input(client, auth, comment, messages):
-    # Login a user.
-    auth.login()
-
-    # Attempt to comment on an article.
-    response = client.post(
-        '/comment',
-        data={'comment': comment, 'article_id': 2}
-    )
-    # Check that supplying invalid comment text generates appropriate error messages.
-    for message in messages:
-        assert message in response.data
-
-"""
 def test_first_page_movies(client):
     # Check that we can retrieve the first movies page.
     response = client.get('/all_movies/0')
@@ -116,21 +89,9 @@ def test_last_page_movies(client):
 
 def test_articles_with_comment(client):
     # Check that we can retrieve the articles page.
-    response = client.get('/all_movies?date=2020-02-28&view_comments_for=1')
+    response = client.get('/movie/1')
     assert response.status_code == 200
 
     # Check that all comments for specified article are included on the page.
     assert b'Oh no, csflix has hit New Zealand' in response.data
     assert b'Yeah Freddie, bad news' in response.data
-
-
-def test_articles_with_tag(client):
-    # Check that we can retrieve the articles page.
-    response = client.get('/articles_by_tag?tag=Health')
-    assert response.status_code == 200
-
-    # Check that all articles tagged with 'Health' are included on the page.
-    assert b'Articles tagged by Health' in response.data
-    assert b'Coronavirus: First case of virus in New Zealand' in response.data
-    assert b'csflix 19 coronavirus: US deaths double in two days, Trump says quarantine not necessary' in response.data
-"""

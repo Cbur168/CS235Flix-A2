@@ -1,4 +1,3 @@
-"""
 from datetime import date, datetime
 from typing import List
 
@@ -47,15 +46,15 @@ def test_repository_can_retrieve_article(in_memory_repo):
     # Check that the Article has the expected title.
     assert article.title == 'Guardians of the Galaxy'
 
-    # Check that the Article is commented as expected.
-    # comment_one = [comment for comment in article.comments if comment.comment == 'Oh no, csflix has hit New Zealand'][
-    #     0]
-    # comment_two = [comment for comment in article.comments if comment.comment == 'Yeah Freddie, bad news'][0]
+    #Check that the Article is commented as expected.
+    comment_one = [comment for comment in article.comments if comment.review_text == 'Oh no, csflix has hit New Zealand'][0]
+    comment_two = [comment for comment in article.comments if comment.review_text == 'Yeah Freddie, bad news'][0]
 
-    # assert comment_one.user.username == 'fmercury'
-    # assert comment_two.user.username == "thorke"
+    assert comment_one.user.username == 'fmercury'
+    assert comment_two.user.username == "thorke"
 
     # Check that the Article is tagged as expected.
+
     assert repr(article.genres) == "[<Genre Action>, <Genre Adventure>, <Genre Sci-Fi>]"
 
 def test_repository_does_not_retrieve_a_non_existent_article(in_memory_repo):
@@ -97,17 +96,11 @@ def test_repository_returns_an_empty_list_for_non_existent_ids(in_memory_repo):
 
     assert len(articles) == 0
 
-def test_repository_can_add_a_tag(in_memory_repo):
-    tag = Tag('Motoring')
-    in_memory_repo.add_tag(tag)
-
-    assert tag in in_memory_repo.get_tags()
-
 
 def test_repository_can_add_a_comment(in_memory_repo):
     user = in_memory_repo.get_user('thorke')
     article = in_memory_repo.get_article(2)
-    comment = make_comment("Trump's onto it!", user, article)
+    comment = make_comment("I don't know what to think", user, article, 7)
 
     in_memory_repo.add_comment(comment)
 
@@ -143,4 +136,3 @@ def test_repository_does_not_add_a_comment_without_an_article_properly_attached(
 
 def test_repository_can_retrieve_comments(in_memory_repo):
     assert len(in_memory_repo.get_comments()) == 3
-"""
