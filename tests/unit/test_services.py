@@ -138,10 +138,9 @@ def test_get_first_page_movies_with_search_and_filter(in_memory_repo):
     assert articles_as_dict[1]['title'] == '10 Years'
     assert articles_as_dict[2]['release_year'] == 2009
 
-def test_invalid_search_raises_error(in_memory_repo):
+def test_invalid_search_is_handled_elsewhere(in_memory_repo):
 
-    with pytest.raises(IndexError):
-        articles_as_dict = news_services.get_all_movies(0, in_memory_repo, search="sdthgsd")
+    articles_as_dict = news_services.get_all_movies(0, in_memory_repo, search="sdthgsd")
 
 
 def test_get_articles_by_filter_tag(in_memory_repo):
