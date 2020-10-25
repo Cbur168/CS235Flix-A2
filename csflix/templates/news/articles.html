@@ -5,8 +5,29 @@
 <main id="main">
     <header id="article-header">
         <h1>{{ articles_title }}</h1>
-    </header>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 
+      <div class="search">
+        <form action="{{url_for('news_bp.all_movies', page_number=0)}}">
+            <div class="set-filters">
+                Filter Movies By: <br>
+                <input type="radio" name="sort" id="movies" value="title" class="filter"> Movies
+                <input type="radio" name="sort" id="genres" value="genres" class="filter"> Genres
+                <input type="radio" name="sort" id="actors" value="actors" class="filter"> Actors
+                <input type="radio" name="sort" id="director" value="director" class="filter"> Directors
+            </div>
+            <input class="form-control" name="search" placeholder="Browse Movies.." autocomplete="off" autofocus="autofocus" type="text">
+            <button class="btn-general" type="submit">Search</button>
+        </form>
+      </div>
+      <br><br>
+      <hr class="bar">
+      
+    </header>
+    <h2>
+        {% if 'no_results' in session %} {{session['no_results']}} {% endif %}
+    </h2>
     <nav style="clear:both">
             <div style="float:left">
                 {% if first_article_url is not none %}
@@ -44,11 +65,6 @@
         <p>Metascore: {{article.metascore}}  Rating: {{article.rating}}/10</p>
         <p>Gross Revenue: {{article.revenue}} million</p>
         <p>{{article.votes}} Votes</p>
-        <div style="float:left">
-            {% for tag in article.tags %}
-            <button class="btn-general" onclick="location.href='{{ tag_urls[tag.name] }}'">{{ tag.name }}</button>
-            {% endfor %}
-        </div>
         <div style="float:right">
             {% if article.comments|length > 0 and article.id != show_comments_for_article %}
                 <button class="btn-general" onclick="location.href='{{ article.view_comment_url }}'">{{ article.comments|length }} comments</button>
